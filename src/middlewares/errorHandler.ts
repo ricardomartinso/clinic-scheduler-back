@@ -1,26 +1,21 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
+import {
+  AppError,
+  errorTypeToStatusCode,
+  isAppError,
+} from "../utils/errorUtils.js";
 
-export default function errorHandler(
-  error: any,
+export function errorHandlerMiddleware(
+  err: Error | AppError,
   req: Request,
   res: Response,
   next: NextFunction
 ) {
-  if (error) {
-    if (error.type == "not_found") {
-      return res.status(404).send(error.message);
-    }
-    if (error.type == "conflict") {
-      return res.status(409).send(error.message);
-    }
-    if (error.type == "not_authorized") {
-      return res.status(422).send(error.message);
-    }
-    if (error.type == "unauthorized") {
-      return res.status(401).send(error.message);
-    }
-  }
-  console.log(error);
+  console.log(err);
 
-  return res.status(500).send("Server error has ocurred!");
+  if (isAppError(err)) {
+    return res.status(errorTypeToStatusCode(err.type)).send(err.message);
+  }
+
+  return res.sendStatus(500);
 }
