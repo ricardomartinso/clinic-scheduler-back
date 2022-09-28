@@ -10,3 +10,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id Int @id @default(autoincrement())
+  email String @unique
+  password String
+
+  @@map("users")
+}
+
+model Patient {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  cpf Int @unique
+  health_insurance String
+  birth_date DateTime @db.Date
+
+  consultations Consultation[]
+
+
+  phoneId Int
+  phone Phone @relation(fields: [phoneId], references: [id])
+
+
+  addressId Int
+  address Address @relation(fields: [addressId], references: [id])
+
+  @@map("patients")
+}
+
+model Phone {
+  id Int @id @default(autoincrement())
+  number BigInt @unique
+  patients Patient[]
+
+  @@map("phones")
+}
+
+model Address {
+  id Int @id @default(autoincrement())
+  street String
+  street_number Int
+  district String
+  cep Int
+  patients Patient[]
+
+  @@map("address")
+}
+
+model Consultation {
+  id Int @id @default(autoincrement())
+  treatments Treatments[]
+
+  patient_id Int
+  patient Patient @relation(fields: [patient_id], references: [id])
+
+  @@map("consultations")
+}
+
+model Treatments {
+  id Int @id @default(autoincrement())
+  consultation_id Int
+  consultation Consultation @relation(fields: [consultation_id], references: [id])
+
+  @@map("treatments")
+}
