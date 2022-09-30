@@ -57,10 +57,18 @@ model Address {
 
   @@map("address")
 }
+enum ConsultationTurn {
+  manha
+  tarde
+
+  @@map("consultation_turn")
+}
 
 model Consultation {
   id Int @id @default(autoincrement())
   treatments Treatments[]
+  consultation_date DateTime @db.Date
+  consultation_turn ConsultationTurn
 
   patient_id Int
   patient Patient @relation(fields: [patient_id], references: [id])
