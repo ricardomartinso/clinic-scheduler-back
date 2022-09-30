@@ -21,28 +21,24 @@ model User {
 model Patient {
   id Int @id @default(autoincrement())
   name String
-  email String @unique
-  cpf Int @unique
-  health_insurance String
-  birth_date DateTime @db.Date
+  email String? @unique
+  cpf Int? @unique
+  health_insurance String?
+  birth_date DateTime? @db.Date
 
   consultations Consultation[]
-
-
-  phoneId Int
-  phone Phone @relation(fields: [phoneId], references: [id])
-
-
-  addressId Int
-  address Address @relation(fields: [addressId], references: [id])
+  phone Phone[]
+  address Address[]
 
   @@map("patients")
 }
 
 model Phone {
   id Int @id @default(autoincrement())
-  number BigInt @unique
-  patients Patient[]
+  number String @unique
+  patientId Int
+
+  patient Patient @relation(fields: [patientId], references: [id])
 
   @@map("phones")
 }
@@ -53,7 +49,9 @@ model Address {
   street_number Int
   district String
   cep Int
-  patients Patient[]
+  patientId Int
+  patient Patient @relation(fields: [patientId], references: [id])
+
 
   @@map("address")
 }
@@ -66,12 +64,13 @@ enum ConsultationTurn {
 
 model Consultation {
   id Int @id @default(autoincrement())
-  treatments Treatments[]
-  consultation_date DateTime @db.Date
+  patientName String
+  patient_id Int
+  consultation_date DateTime @db.Date()
   consultation_turn ConsultationTurn
 
-  patient_id Int
   patient Patient @relation(fields: [patient_id], references: [id])
+  treatments Treatments[]
 
   @@map("consultations")
 }
