@@ -11,7 +11,8 @@ import { CreatePatient } from "../types/patientTypes";
 
 export async function consultationPatientRegister(
   name: string,
-  phoneNumber: string
+  phoneNumber: string,
+  clinicId: number
 ) {
   await isNumberRepeated(phoneNumber);
 
@@ -21,6 +22,7 @@ export async function consultationPatientRegister(
     cpf: null,
     health_insurance: null,
     birth_date: null,
+    clinic_id: clinicId,
   });
 
   const phoneToCreate: CreatePhone = {
@@ -33,7 +35,10 @@ export async function consultationPatientRegister(
   return patient;
 }
 
-export async function patientRegister(patient: CreatePatient) {
+export async function patientRegister(
+  patient: CreatePatient,
+  clinicId: number
+) {
   const patientCreation = await createPatient(patient);
 }
 
