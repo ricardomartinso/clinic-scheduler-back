@@ -14,6 +14,7 @@ model User {
   id Int @id @default(autoincrement())
   email String @unique
   password String
+  clinic Clinic[]
 
   @@map("users")
 }
@@ -25,7 +26,9 @@ model Patient {
   cpf Int? @unique
   health_insurance String?
   birth_date DateTime? @db.Date
+  clinic_id Int
 
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
   consultations Consultation[]
   phone Phone[]
   address Address[]
@@ -65,10 +68,13 @@ enum ConsultationTurn {
 model Consultation {
   id Int @id @default(autoincrement())
   patientName String
+  health_insurance String?
   patient_id Int
+  clinic_id Int
   consultation_date DateTime @db.Date()
   consultation_turn ConsultationTurn
-
+  
+  clinic Clinic @relation(fields: [clinic_id], references: [id])
   patient Patient @relation(fields: [patient_id], references: [id])
   treatments Treatments[]
 
@@ -77,8 +83,22 @@ model Consultation {
 
 model Treatments {
   id Int @id @default(autoincrement())
+  description String
   consultation_id Int
   consultation Consultation @relation(fields: [consultation_id], references: [id])
 
   @@map("treatments")
+}
+
+model Clinic {
+  id Int @id @default(autoincrement())
+  name String
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+
+
+  consultations Consultation[]
+  patients Patient[]
+
+  @@map("clinic")
 }
