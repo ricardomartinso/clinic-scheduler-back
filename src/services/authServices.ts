@@ -3,7 +3,8 @@ import { AuthUser } from "../types/authTypes";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { conflictError, unauthorizedError } from "../utils/errorUtils";
-
+import dotenv from "dotenv";
+dotenv.config();
 export async function createUser(user: AuthUser) {
   await verifyEmailCreation(user.email);
 
@@ -32,7 +33,7 @@ export async function loginUser(user: AuthUser) {
 async function verifyEmailCreation(email: string) {
   const existEmail = await findByEmail(email);
 
-  if (existEmail) return conflictError("User already registered!");
+  if (existEmail) throw conflictError("User already registered!");
 }
 
 function verifyValidPassword(userPassword: string, encryptedPassword: string) {
